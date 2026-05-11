@@ -2,6 +2,8 @@ const router = require('express').Router()
 const Build = require('../models/Build')
 const verifyToken = require('../middleware/verify-token')
 
+
+// buuild create
 router.post('/', verifyToken ,async (req,res)=>{
     try{
         console.log(req.user)
@@ -12,10 +14,11 @@ router.post('/', verifyToken ,async (req,res)=>{
     }
     catch(err){
         console.log(err)
-        res.status(500).json(err)
+        res.status(500).json({ err: err.message });
+
     }
 })
-
+// all build get
 router.get('/', async (req,res)=>{
     try{
         const allBuilds = await Build.find().populate('title')
@@ -23,9 +26,31 @@ router.get('/', async (req,res)=>{
     }
     catch(err){
         console.log(err)
-        res.status(500).json(err)
+        res.status(500).json({ err: err.message });
+
 
     }
 })
 
+// get one build
+router.get("/:id", async (req, res) => {
+  try {
+    const oneBuild = await oneBuild.findById(req.params.id);
 
+    if (!oneBuild) {
+      return res.status(404).json({ err: "Build not found" });
+    }
+
+    res.status(200).json({ oneBuild });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: err.message });
+  }
+});
+
+
+
+
+
+
+module.exports = router

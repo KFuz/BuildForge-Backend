@@ -7,12 +7,12 @@ const buildItemSchema = new Schema({
     required: true,
     trim: true,
   },
-
-   type: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+//  type might not be needed 
+//    type: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
     category: {
     type: String,
     enum: ['Body', 'Electrical', 'Mechanical', 'Suspension'],
@@ -35,6 +35,12 @@ const buildItemSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'User', 
+    required: true,
+  },
+
+    build: {
+    type: Schema.Types.ObjectId,
+    ref: 'Build', 
     required: true,
   }
 }, { timestamps: true }); 

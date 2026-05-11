@@ -50,11 +50,6 @@ const buildSchema = new Schema({
     ref: 'User', 
     required: true,
   },
-    build: {
-    type: Schema.Types.ObjectId,
-    ref: 'Build', 
-    required: true,
-  }
 }, { timestamps: true }); 
 
 
