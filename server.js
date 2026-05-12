@@ -20,11 +20,11 @@ mongoose.connection.on('connected', () => {
 app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
-app.use('/build',buildRouter);
+
 // Routes go here
 app.use('/auth', authRouter);
-// app.use('/build',verifyToken,buildRouter);
-// app.use('/item',verifyToken,buildItemRouter);
+app.use('/build',verifyToken,buildRouter);
+app.use('/item',verifyToken,buildItemRouter);
 
 app.listen(3000, () => {
   console.log('The express app is ready!');

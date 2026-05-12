@@ -7,12 +7,7 @@ const buildItemSchema = new Schema({
     required: true,
     trim: true,
   },
-//  type might not be needed 
-//    type: {
-//     type: String,
-//     required: true,
-//     trim: true,
-//   },
+
     category: {
     type: String,
     enum: ['Body', 'Electrical', 'Mechanical', 'Suspension'],
