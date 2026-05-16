@@ -6,8 +6,8 @@ const verifyToken = require("../middleware/verify-token");
 router.post("/", verifyToken, async (req, res) => {
   try {
     console.log(req.user);
-    req.body.User = req.user._id;
-    const createdBuild = await Build.create(req.body);
+   req.body.owner = req.user._id;
+const createdBuild = await Build.create(req.body);
     res.status(201).json(createdBuild);
   } catch (err) {
     console.log(err);
@@ -17,7 +17,7 @@ router.post("/", verifyToken, async (req, res) => {
 // all build get
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const allBuilds = await Build.find().populate("title");
+    const allBuilds = await Build.find({ owner: req.user._id });
     res.json(allBuilds);
   } catch (err) {
     console.log(err);
@@ -26,9 +26,12 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // get one build
-router.get("/:id",verifyToken, async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
   try {
-    const oneBuild = await oneBuild.findById(req.params.id);
+    const oneBuild = await Build.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
 
     if (!oneBuild) {
       return res.status(404).json({ err: "Build not found" });
@@ -45,7 +48,7 @@ router.get("/:id",verifyToken, async (req, res) => {
 router.put("/:id", verifyToken, async (req, res) => {
   try {
     const updatedBuild = await Build.findOneAndUpdate(
-      { _id: req.params.id, user: req.user._id },
+      { _id: req.params.id, owner: req.user._id },
       {
         title: req.body.title,
         make: req.body.make,
@@ -76,7 +79,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const deletedBuild = await Build.findOneAndDelete({
       _id: req.params.id,
-      user: req.user._id,
+      owner: req.user._id,
     });
 
     if (!deletedBuild) {
