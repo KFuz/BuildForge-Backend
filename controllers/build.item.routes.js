@@ -5,9 +5,9 @@ const verifyToken = require("../middleware/verify-token");
 // build item create
 router.post("/", verifyToken, async (req, res) => {
   try {
-    console.log(req.user);
-    req.body.User = req.user._id;
+    req.body.owner = req.user._id;
     const createdItem = await BuildItem.create(req.body);
+
     res.status(201).json(createdItem);
   } catch (err) {
     console.log(err);
@@ -17,7 +17,7 @@ router.post("/", verifyToken, async (req, res) => {
 // all build item get
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const allItem = await BuildItem.find().populate("title");
+    const allItem = await BuildItem.find({ owner: req.user._id }).populate("build");
     res.json(allItem);
   } catch (err) {
     console.log(err);
@@ -26,12 +26,15 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // get one Item
-router.get("/:id",verifyToken, async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
   try {
-    const oneItem = await oneItem.findById(req.params.id);
+    const oneItem = await BuildItem.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    }).populate("build");
 
     if (!oneItem) {
-      return res.status(404).json({ err: "Build not found" });
+      return res.status(404).json({ err: "Item not found" });
     }
 
     res.status(200).json({ oneItem });
@@ -45,35 +48,35 @@ router.get("/:id",verifyToken, async (req, res) => {
 router.put("/:id", verifyToken, async (req, res) => {
   try {
     const updatedItem = await BuildItem.findOneAndUpdate(
-      { _id: req.params.id, user: req.user._id },
+      { _id: req.params.id, owner: req.user._id },
       {
         title: req.body.title,
         category: req.body.category,
         status: req.body.status,
         cost: req.body.cost,
         notes: req.body.notes,
-
+        build: req.body.build,
       },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
 
     if (!updatedItem) {
       return res.status(404).json({ err: "Item not found" });
     }
 
-    res.status(200).json({ Build: updatedItem });
+    res.status(200).json({ Item: updatedItem });
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: err.message });
   }
 });
 
-// DELETE /Builds/:id
+// DELETE /item/:id
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const deletedItem = await BuildItem.findOneAndDelete({
       _id: req.params.id,
-      user: req.user._id,
+      owner: req.user._id,
     });
 
     if (!deletedItem) {
