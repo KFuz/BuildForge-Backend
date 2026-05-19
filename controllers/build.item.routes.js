@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const BuildItem = require("../models/BuildItem");
+const BuildItem = require("../models/Builditem");
 const verifyToken = require("../middleware/verify-token");
 
 // build item create
